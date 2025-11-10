@@ -18,6 +18,7 @@ type TemplateDetailResponse = {
   content: string;
   config?: {
     copyHtmlButton?: boolean;
+    instructionsUrl?: string;
     [key: string]: unknown;
   };
 };
@@ -221,9 +222,22 @@ const App = () => {
   };
 
   const showCopyButton = templateDetail?.config?.copyHtmlButton ?? true;
+  const instructionsUrl = templateDetail?.config?.instructionsUrl;
 
   return (
-    <div className="app-container">
+    <div className="app-shell">
+      <header className="top-bar">
+        <div className="logo">
+          <img src="/sigfig-logo.svg" alt="Sig Fig logo" />
+        </div>
+        {instructionsUrl ? (
+          <a href={instructionsUrl} target="_blank" rel="noreferrer" className="instructions-link">
+            Read Instructions
+          </a>
+        ) : null}
+      </header>
+
+      <div className="app-container">
       <header className="app-header">
         <h1>Email Signature Builder</h1>
         <p>Choose a template, fill in your details, and copy the rendered signature.</p>
@@ -256,7 +270,7 @@ const App = () => {
         ) : templates.length === 1 ? (
           <div className="single-template-banner">
             Using template: <strong>{templates[0]?.displayName}</strong>
-          </div>
+      </div>
         ) : (
           <div className="single-template-banner">No templates available.</div>
         )}
@@ -280,7 +294,7 @@ const App = () => {
                   type="text"
                   value={formValues[variable] ?? ''}
                   onChange={(event) => handleFieldChange(variable, event.target.value)}
-                  placeholder={variable}
+                  placeholder={formatFieldLabel(variable)}
                 />
               </label>
             ))}
@@ -293,7 +307,7 @@ const App = () => {
             {showCopyButton ? (
               <button type="button" onClick={handleCopy} disabled={!renderedPreview}>
                 {copyState === 'copied' ? 'Copied!' : 'Copy HTML'}
-              </button>
+        </button>
             ) : null}
           </div>
           {renderedPreview ? (
@@ -312,6 +326,7 @@ const App = () => {
         </section>
       </main>
     </div>
+      </div>
   );
 };
 

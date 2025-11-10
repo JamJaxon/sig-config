@@ -27,3 +27,7 @@ input:focus-visible {
   outline: 3px solid rgba(45, 108, 223, 0.35);
   outline-offset: 2px;
 }
+
+.logo {
+  height: 36px;
+}
