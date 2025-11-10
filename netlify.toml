@@ -3,6 +3,9 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[functions]
+  included_files = ["email-templates/**"]
+
 [dev]
   command = "npm run dev"
 
