@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import Mustache from 'mustache';
 import './App.css';
 
@@ -81,6 +82,7 @@ const formatFieldLabel = (variable: string): string => {
 };
 
 const App = () => {
+  const { isLoading, isAuthenticated, error, loginWithRedirect, logout } = useAuth0();
   const [templates, setTemplates] = useState<TemplateOption[]>([]);
   const [templateListError, setTemplateListError] = useState<string | null>(null);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
@@ -224,110 +226,132 @@ const App = () => {
   const showCopyButton = templateDetail?.config?.copyHtmlButton ?? true;
   const instructionsUrl = templateDetail?.config?.instructionsUrl;
 
-  return (
-    <div className="app-shell">
-      <header className="top-bar">
-        <div className="logo">
-          <img src="/sigfig-logo.svg" alt="Sig Fig logo" />
-        </div>
-        {instructionsUrl ? (
-          <a href={instructionsUrl} target="_blank" rel="noreferrer" className="instructions-link">
-            Read Instructions
-          </a>
-        ) : null}
-      </header>
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-      <div className="app-container">
-      <header className="app-header">
-        <h1>Email Signature Builder</h1>
-        <p>Choose a template, fill in your details, and copy the rendered signature.</p>
-      </header>
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
 
-      <section className="template-controls">
-        {loadingTemplates ? (
-          <p className="hint">Loading templates…</p>
-        ) : templates.length > 1 ? (
-          <>
-            <label htmlFor="template-select" className="visually-hidden">
-              Select template
-            </label>
-            <select
-              id="template-select"
-              value={selectedSlug}
-              onChange={(event) => setSelectedSlug(event.target.value)}
-              disabled={templates.length === 0}
-            >
-              {templates.map((template) => (
-                <option key={template.slug} value={template.slug}>
-                  {template.displayName}
-                </option>
-              ))}
-            </select>
-            <button type="button" onClick={handleLoadTemplate} disabled={!selectedSlug || loadingTemplateDetail}>
-              {loadingTemplateDetail ? 'Loading…' : 'Load'}
-            </button>
-          </>
-        ) : templates.length === 1 ? (
-          <div className="single-template-banner">
-            Using template: <strong>{templates[0]?.displayName}</strong>
-      </div>
-        ) : (
-          <div className="single-template-banner">No templates available.</div>
-        )}
-      </section>
-
-      {templateListError ? <div className="error-banner">{templateListError}</div> : null}
-      {templateDetailError ? <div className="error-banner">{templateDetailError}</div> : null}
-
-      <main className="content">
-        <section className="form-pane">
-          <h2>Template Fields</h2>
-          {loadingTemplateDetail && <p className="hint">Loading template…</p>}
-          {!loadingTemplateDetail && variables.length === 0 && (
-            <p className="hint">Select a template and click Load to begin.</p>
-          )}
-          <form className="field-grid">
-            {variables.map((variable) => (
-              <label key={variable} className="field">
-                <span className="field-label">{formatFieldLabel(variable)}</span>
-                <input
-                  type="text"
-                  value={formValues[variable] ?? ''}
-                  onChange={(event) => handleFieldChange(variable, event.target.value)}
-                  placeholder={formatFieldLabel(variable)}
-                />
-              </label>
-            ))}
-          </form>
-        </section>
-
-        <section className="preview-pane">
-          <div className="preview-header">
-            <h2>Live Preview</h2>
-            {showCopyButton ? (
-              <button type="button" onClick={handleCopy} disabled={!renderedPreview}>
-                {copyState === 'copied' ? 'Copied!' : 'Copy HTML'}
-        </button>
+  if (isAuthenticated) {
+    return (
+      <div className="app-shell">
+        <header className="top-bar">
+          <div className="logo">
+            <img src="/sigfig-logo.svg" alt="Sig Fig logo" />
+          </div>
+          <div>
+            {instructionsUrl ? (
+              <a href={instructionsUrl} target="_blank" rel="noreferrer" className="instructions-link">
+                Read Instructions
+              </a>
             ) : null}
+            <button className="logout-link" onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
+              Log out
+            </button>
           </div>
-          {renderedPreview ? (
-            <p className="hint gmail-note">
-              Gmail users: select the preview area manually and copy to preserve formatting.
-            </p>
-          ) : null}
-          {copyState === 'error' ? <p className="error-banner">Unable to copy. Please try again.</p> : null}
-          <div className="preview-output">
-            {renderedPreview ? (
-              <div dangerouslySetInnerHTML={{ __html: renderedPreview }} />
-            ) : (
-              <p className="hint">Fill in the fields to see your signature.</p>
-            )}
-          </div>
+        </header>
+
+        <div className="app-container">
+        <header className="app-header">
+          <h1>Email Signature Builder</h1>
+          <p>Choose a template, fill in your details, and copy the rendered signature.</p>
+        </header>
+
+        <section className="template-controls">
+          {loadingTemplates ? (
+            <p className="hint">Loading templates…</p>
+          ) : templates.length > 1 ? (
+            <>
+              <label htmlFor="template-select" className="visually-hidden">
+                Select template
+              </label>
+              <select
+                id="template-select"
+                value={selectedSlug}
+                onChange={(event) => setSelectedSlug(event.target.value)}
+                disabled={templates.length === 0}
+              >
+                {templates.map((template) => (
+                  <option key={template.slug} value={template.slug}>
+                    {template.displayName}
+                  </option>
+                ))}
+              </select>
+              <button type="button" onClick={handleLoadTemplate} disabled={!selectedSlug || loadingTemplateDetail}>
+                {loadingTemplateDetail ? 'Loading…' : 'Load'}
+              </button>
+            </>
+          ) : templates.length === 1 ? (
+            <div className="single-template-banner">
+              Using template: <strong>{templates[0]?.displayName}</strong>
+        </div>
+          ) : (
+            <div className="single-template-banner">No templates available.</div>
+          )}
         </section>
-      </main>
-    </div>
+
+        {templateListError ? <div className="error-banner">{templateListError}</div> : null}
+        {templateDetailError ? <div className="error-banner">{templateDetailError}</div> : null}
+
+        <main className="content">
+          <section className="form-pane">
+            <h2>Template Fields</h2>
+            {loadingTemplateDetail && <p className="hint">Loading template…</p>}
+            {!loadingTemplateDetail && variables.length === 0 && (
+              <p className="hint">Select a template and click Load to begin.</p>
+            )}
+            <form className="field-grid">
+              {variables.map((variable) => (
+                <label key={variable} className="field">
+                  <span className="field-label">{formatFieldLabel(variable)}</span>
+                  <input
+                    type="text"
+                    value={formValues[variable] ?? ''}
+                    onChange={(event) => handleFieldChange(variable, event.target.value)}
+                    placeholder={formatFieldLabel(variable)}
+                  />
+                </label>
+              ))}
+            </form>
+          </section>
+
+          <section className="preview-pane">
+            <div className="preview-header">
+              <h2>Live Preview</h2>
+              {showCopyButton ? (
+                <button type="button" onClick={handleCopy} disabled={!renderedPreview}>
+                  {copyState === 'copied' ? 'Copied!' : 'Copy HTML'}
+          </button>
+              ) : null}
+            </div>
+            {renderedPreview ? (
+              <p className="hint gmail-note">
+                Gmail users: select the preview area manually and copy to preserve formatting.
+              </p>
+            ) : null}
+            {copyState === 'error' ? <p className="error-banner">Unable to copy. Please try again.</p> : null}
+            <div className="preview-output">
+              {renderedPreview ? (
+                <div dangerouslySetInnerHTML={{ __html: renderedPreview }} />
+              ) : (
+                <p className="hint">Fill in the fields to see your signature.</p>
+              )}
+            </div>
+          </section>
+        </main>
       </div>
-  );
+    </div>
+    );
+  } else {
+    return (
+      <div className='login'>
+        <img src="/sigfig-logo.svg" alt="Sig Fig logo" />
+        <button className="login-link" onClick={() => loginWithRedirect()}>Log in</button>
+      </div>
+    );
+  }
 };
 
 export default App;
