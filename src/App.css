@@ -24,39 +24,8 @@ body {
   box-shadow: 0 10px 30px -20px rgba(31, 41, 55, 0.35);
 }
 
-.login img {
-  height: 72px;
-}
-
-.login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  height: 100vh;
-}
-
 .logo img {
   height: 36px;
-}
-
-.login-link {
-  font-size: medium;
-  font-weight: 600;
-  color: #2d6cdf;
-  background-color: rgba(0, 0, 0, 0);
-  text-decoration: none;
-  cursor: pointer;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(45, 108, 223, 0.3);
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.login-link:hover {
-  background-color: rgba(45, 108, 223, 0.08);
-  color: #1f3f8f;
 }
 
 .instructions-link {
@@ -70,25 +39,6 @@ body {
 }
 
 .instructions-link:hover {
-  background-color: rgba(45, 108, 223, 0.08);
-  color: #1f3f8f;
-}
-
-.logout-link {
-  font-size: medium;
-  font-weight: 600;
-  color: #2d6cdf;
-  background-color: rgba(0, 0, 0, 0);
-  text-decoration: none;
-  cursor: pointer;
-  padding: 0.45rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(45, 108, 223, 0.3);
-  margin-left: 1rem;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.logout-link:hover {
   background-color: rgba(45, 108, 223, 0.08);
   color: #1f3f8f;
 }

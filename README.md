@@ -4,12 +4,6 @@ A lightweight React + Vite app that discovers `.mustache` email signature templa
 
 ## Getting Started
 
-Ensure you've setup a `.env` file in the root directory with the following properties:
-```
-VITE_AUTH0_CLIENT_ID = "<found in Auth0 configuration>"
-VITE_AUTH0_DOMAIN = "<found in Auth0 configuration>"
-```
-
 ```bash
 npm install
 npm run dev
