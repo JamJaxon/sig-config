@@ -4,6 +4,11 @@ A lightweight React + Vite app that discovers `.mustache` email signature templa
 
 ## Getting Started
 
+Ensure you've setup a `.env` file in the root directory with the following properties:
+```
+GOOGLE_CLIENT_ID = "<found in Google OAuth configuration>"
+```
+
 ```bash
 npm install
 npm run dev

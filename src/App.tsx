@@ -3,6 +3,8 @@ import { GoogleLogin, GoogleOAuthProvider, googleLogout } from '@react-oauth/goo
 import Mustache from 'mustache';
 import './App.css';
 
+const clientId: string = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 type TemplateOption = {
   slug: string;
   displayName: string;
@@ -233,7 +235,7 @@ const App = () => {
 
   if (isAuthenticated) {
     return (
-      <GoogleOAuthProvider clientId="556518777150-nf3d6nf55jip90f1mfrubasmikb3u6ud.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={clientId}>
         <div className="app-shell">
           <header className="top-bar">
             <div className="logo">
@@ -348,7 +350,7 @@ const App = () => {
     );
   } else {
     return (
-      <GoogleOAuthProvider clientId="556518777150-nf3d6nf55jip90f1mfrubasmikb3u6ud.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={clientId}>
         <div className='login'>
           <img src="/sigfig-logo.svg" alt="Sig Fig logo" />
           <GoogleLogin
